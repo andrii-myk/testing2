@@ -1,0 +1,35 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    {{ test.title }}
+{% endblock %}
+
+{% block content_title %}
+    <h2>{{ test.title }}</h2>
+{% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    <h3>{{test.description}} </h3>
+    {% for question in test.questions.all %}
+        <p>{{ question }}</p>
+        {% empty %}
+        empty list!
+  {% endfor %}
+  <div class="container">
+      <div class="row no-gutter">
+          <div class="col-sm-1">
+             <a href="{% url 'testing:test_run_url' test.id %}" class="btn btn-primary" role="button">Run</a>
+          </div>
+          <div class="col-sm-1">
+            <a href="{% url 'testing:test_update_url' test.id %}" class="btn btn-warning" role="button">Edit</a>
+          </div>
+          <div class="col-sm-1">
+            <a href="{% url 'testing:test_delete_url' test.id %}" class="btn btn-danger" role="button">Delete</a>
+          </div>
+      </div>
+  </div>
+
+
+{% endblock %}

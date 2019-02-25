@@ -1,0 +1,32 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Test create
+{% endblock %}
+
+{% block content_title %}
+    Create your own absolutely brand new test.
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'testing:test_create_url' %}" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+                {{ field.label }}
+                {{ field }}
+            </div>
+            
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary">Create</button>
+        
+    </form>
+{% endblock %}

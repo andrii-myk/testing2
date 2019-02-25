@@ -1,0 +1,32 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Edit question.
+{% endblock %}
+
+{% block content_title %}
+    Edit question "{{question.question}}""
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'testing:question_update_url' question.id%}" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+                {{ field.label }}
+                {{ field }}
+            </div>
+            
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary">Update question</button>
+        
+    </form>
+{% endblock %}

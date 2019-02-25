@@ -1,0 +1,27 @@
+{% extends 'testing/base_testing.html' %}
+
+{% block title %}
+    Tests
+{% endblock %}
+
+{% block content_title %}
+    List of all tests.
+{% endblock %}
+
+{% block content %}
+
+    {% for test in tests %}
+    <div class="row">
+        <div class="my-custom-container">
+            <div class="card w-25" style="background-color: #eee;">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ test.title}}</h5>
+                        <p class="card-text">{{test.description}}</p>
+                        <a href="{{ test.get_absolute_url}}" class="btn btn-primary">To the test</a>
+                    </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

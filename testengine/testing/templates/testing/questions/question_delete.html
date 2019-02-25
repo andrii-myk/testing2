@@ -1,0 +1,20 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Delete question.
+{% endblock %}
+
+{% block content_title %}
+    Delete question "{{question.question}}""
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'testing:question_delete_url' question.id %}" method="POST">
+        {% csrf_token %}
+        <h3>Do you realy want to delete this question?</h3>
+        <a href="{% url 'testing:questions_url' %}">Cancel</a>
+        <button type="submit" class="btn btn-danger">Delete</button>
+
+    </form>
+{% endblock %}

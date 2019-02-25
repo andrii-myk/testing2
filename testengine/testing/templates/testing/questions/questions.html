@@ -1,0 +1,41 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Questions
+{% endblock %}
+
+{% block content_title %}
+    List of all questions.
+{% endblock %}
+
+{% block content %}
+
+    {% for question in questions %}
+    <div class="row">
+        <div class="my-custom-container">
+            <div class="card w-25" style="background-color: #eee;">
+                    <div class="card-body">
+                        <p class="card-text">{{question.question}}</p>
+                        <div class="container">
+                            <div class="row no-gutter">
+                                <div class="col-sm-1">
+                                  <a href="{% url 'testing:question_update_url' question.id %}" class="btn btn-warning" role="button">Edit</a>
+                                </div>
+                                <div class="col-sm-1">
+                                  <a href="{% url 'testing:question_delete_url' question.id %}"class="btn btn-danger" role="button">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+     
+        <a href="{% url 'testing:question_create_url' %}">
+                <div class="fab"> + </div>
+        </a>
+    
+
+{% endblock %}
