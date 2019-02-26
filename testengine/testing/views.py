@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory, modelformset_factory
 from django import forms
 
 from .models import Test, Question, TestRunAnswer, TestRun
-from .forms import QuestionForm, TestForm, TestRunAnswerForm
+from .forms import QuestionForm, TestForm, TestRunAnswerForm, TestRunDetailForm
 
 # Create your views here.
 def index(request):
@@ -114,72 +114,60 @@ class TestDelete(ListView):
 
 
 class TestRunAnswerView(ListView):
-    def get (self, request, id):
-        TestRunFormSet = inlineformset_factory(TestRun, TestRunAnswer,fields=('question', 'answer'), exclude=('test_run', 'test_id'),
-                        widgets={'question': forms.TextInput(attrs={'class': 'form-control', 'readonly':'readonly'}),
-                                 'answer': forms.TextInput(attrs={'class': 'form-control'})},
-                                 extra=0)
-        test = get_object_or_404(Test, pk=id)
-        # instance = TestRun.objects.create(test=test)
-        formset = TestRunFormSet(instance = test, queryset=TestRun.objects.filter(test__id=id))
-        print(formset)
-        return render(request, 'testing/tests/test_run.html', context={'formset': formset})
-
-    # def post(self, request, id):
-    #     TestRunFormSet = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), 
-    #                     widgets={'question': forms.TextInput(attrs={'class': 'form-control', 'readonly':'readonly'}),
-    #                              'answer': forms.TextInput(attrs={'class': 'form-control'})},
-    #                              extra=0)
-    #     formset = TestRunFormSet(request.POST, queryset=Question.objects.filter(tests__id=id))
-    #     print(formset)
-    #     test_run = TestRun.objects.create(test=Test.objects.get(pk=id))
-
-    #     form.fields['test_run'].choices = [(test_run, test_run)]
-
-    #     if formset.is_valid():
-    #         print('valid')
-    #         return redirect(reverse('testing:tests_index'))
-    #     return render(request, 'testing/tests/test_run.html', context={'formset': formset, 'id': id})
-
-
-    
-    # def get(self, request, id):
-    #     test_run_set = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0 )
-    #     form = test_run_set(queryset=Test.objects.get(pk=id).questions.filter(tests__id=id))
-    #     return render(request, 'testing/tests/test_run.html', context={'formset': form})
+    def get(self, request, id):
+        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0 )
+        formset = TestRunFormSet(queryset=Test.objects.get(pk=id).questions.filter(tests__id=id))
+        return render(request, 'testing/test_runs/test_run.html', context={'formset': formset})
         
-    # def get(self, request, id):
-    #     test = get_object_or_404(Test, id=id)
-    #     # test_run = TestRun.objects.create(test=test)
+    #WARNING BELOW YOU'RE GOING TO WATCH A LOT OF BAD CODE
+    def post(self, request, id):
+        questions=Question.objects.filter(tests__id=id)
+        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0)
+        bound_formset = TestRunFormSet(request.POST, queryset=questions)
+        answer_questions = {}
+        answer_error = False
+        for form in bound_formset.forms:
+            form.is_valid()
+            q_str = form['question'].data
+            question = 's'
+            for q in questions:
+                if q.question == q_str:
+                    question = q
+            answer = form.cleaned_data.get('answer')
+            if not answer or not question:
+                answer_error = True
+            answer_questions[question] = answer            
+            
+        if answer_error:
+            return render(request, 'testing/test_runs/test_run.html', context={'formset': bound_formset, 'id': id})
+        else:
+            test_run = TestRun.objects.create(test=Test.objects.get(pk=id))
+            for question, answer in answer_questions.items():
+                TestRunAnswer.objects.create(question=question, answer=answer, test_run=test_run) 
+            return redirect(reverse('testing:tests_index'))
 
-    #     formset = TestRunFormset(instance=test)
-    #     return render(request, 'testing/tests/test_run.html', context={'formset': formset})
-        
-    # def post(self, request, id):
 
-    #     test = get_object_or_404(Test, id=id)
-    #     test_run = TestRun.objects.create(test=test)
-
-    #     formset = TestRunFormset(instance=test_run, queryset=Question.objects.filter(tests__id=id))
-    #     if formset.is_valid():
-    #         formset.save()
-    #         return redirect('tests_index')
-    #     else:
-    #         formset = TestRunFormset(instance=test)
-
-    #     return render(request, 'testing/tests/test_run.html',context={
-    #                 'test_run':test_run,
-    #                 'formset':formset})
-
-    # def post(self, request, id):
-    #     test_run_set = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0 )
-    #     bound_formset = test_run_set(request.POST, queryset=Test.objects.get(pk=id).questions.filter(tests__id=id))
-        
+class TestRuns(ListView):
+    def get(self, request):
+        test_runs = TestRun.objects.all()
+        return render(request, 'testing/test_runs/test_runs_list.html', context={'test_runs': test_runs})
 
 
-    #     if bound_formset.is_valid():
-    #         instances = bound_formset.save(commit=False)
-    #         for instance in instances:
-    #             instance.save()
-    #         return redirect(reverse('testing:index'))
-    #     return render(request, 'testing/tests/test_run.html', context={'formset': bound_formset, 'id': id})
+class TestRunDetail(ListView):
+    def get(self, request, id):
+        test_run = get_object_or_404(TestRun, pk=id)
+        test_run_answers = TestRunAnswer.objects.filter(test_run__id=id)
+        my_formset = []
+        for test_run_answer in test_run_answers:
+            print(dir(test_run_answer))
+            print(test_run)
+            my_formset.append(TestRunDetailForm(instance=test_run_answer))
+        print(my_formset)
+        return render(request, 'testing/test_runs/test_run_detail.html', context={'formset': my_formset, 'test_run':test_run})
+
+
+class TestRunTestList(ListView):
+    """Class for showing test_runs bounded to specific Test"""
+    def get(self, request, id):
+        test_runs = TestRun.objects.filter(test__id=id)
+        return render(request, 'testing/test_runs/test_runs_test_list.html', context={'test_runs': test_runs})

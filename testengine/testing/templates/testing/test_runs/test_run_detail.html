@@ -1,0 +1,25 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    {{ test_run.tests }} run
+{% endblock %}
+
+{% block content_title %}
+    <h2> TestRun for {{ test_run }}</h2>
+{% endblock %}
+
+{% block content %}
+    <form>
+        {% csrf_token %}
+        <!-- {{ formset.management_form }} -->
+        {% for form in formset%}
+            {{ form.as_p }} 
+        {% endfor %}
+
+        
+        <!-- {% for test_run_answer in test_run_answers %}
+            <p>{{ test_run_answer}} </p>
+        {% endfor %} -->
+    </form>
+{% endblock %}

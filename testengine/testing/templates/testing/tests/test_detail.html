@@ -28,6 +28,9 @@
           <div class="col-sm-1">
             <a href="{% url 'testing:test_delete_url' test.id %}" class="btn btn-danger" role="button">Delete</a>
           </div>
+          <div class="col-sm-1">
+            <a href="{% url 'testing:test_run_test_list_url' test.id %}" class="btn btn-success" role="button">TestRuns</a>
+          </div>
       </div>
   </div>
 

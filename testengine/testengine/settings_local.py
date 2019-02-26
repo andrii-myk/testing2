@@ -8,3 +8,5 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+# TIME_ZONE = 'Europe/Kiev'

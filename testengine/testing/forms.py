@@ -28,10 +28,22 @@ class TestForm(forms.ModelForm):
 class TestRunAnswerForm(forms.ModelForm):
     class Meta:
         model = TestRunAnswer
-        fields = ['question', 'answer']
-        exclude = ('test_run',)
+        fields = ('question', 'answer')
+        # exclude = ('test_run',)
         widgets = {'question': forms.TextInput( attrs={'class': 'form-control', 'readonly':'readonly'}),
                     'answer': forms.TextInput( attrs={'class': 'form-control'})}
+
+class TestRunDetailForm(forms.ModelForm):
+    class Meta:
+        model = TestRunAnswer
+        fields = ('question', 'answer')
+        # # exclude = ('test_run',)
+        widgets = {'question': forms.Select( attrs={'class': 'form-control', 'readonly':'readonly', 'disabled':'disabled'}),
+                    'answer': forms.TextInput( attrs={'class': 'form-control', 'readonly':'readonly'})}
+
+# class TestRunDetailForm(forms.Form):
+#     question = forms.CharField(label="Question")
+#     answer = forms.CharField(label="Answer")
 
 # class BaseTestFormset(BaseInlineFormSet):
 

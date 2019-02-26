@@ -1,0 +1,19 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    All Test Runs
+{% endblock %}
+
+{% block content_title %}
+    All Test Runs
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="">
+        {% csrf_token %}
+        {% for test_run in test_runs %}
+            <p><a href="{% url 'testing:test_run_detail_url' test_run.id %}">{{ test_run }}</a></p>
+        {% endfor %}
+    </form>
+{% endblock %}

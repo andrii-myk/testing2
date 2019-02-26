@@ -15,4 +15,7 @@ urlpatterns = [
     path('test/delete/<int:id>/', views.TestDelete.as_view(), name='test_delete_url'),
     path('test/update/<int:id>/', views.TestUpdate.as_view(), name='test_update_url'),
     path('test/run/<int:id>/', views.TestRunAnswerView.as_view(), name='test_run_url'),
+    path('test/run/<int:id>/list/', views.TestRunTestList.as_view(), name='test_run_test_list_url'),
+    path('test/run/list/', views.TestRuns.as_view(), name='test_runs_url'),
+    path('test/run/detail/<int:id>/', views.TestRunDetail.as_view(), name='test_run_detail_url'),
  ]
