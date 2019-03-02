@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import BaseInlineFormSet 
 from django.forms import inlineformset_factory
-from .models import Question, Test, TestRun, TestRunAnswer
+from .models import Question, Test, TestRun, TestRunAnswer, Note
 
 class QuestionForm(forms.ModelForm):
     class Meta:
@@ -40,6 +40,16 @@ class TestRunDetailForm(forms.ModelForm):
         # # exclude = ('test_run',)
         widgets = {'question': forms.Select( attrs={'class': 'form-control', 'readonly':'readonly', 'disabled':'disabled'}),
                     'answer': forms.TextInput( attrs={'class': 'form-control', 'readonly':'readonly'})}
+
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ('text',)
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
 # class TestRunDetailForm(forms.Form):
 #     question = forms.CharField(label="Question")

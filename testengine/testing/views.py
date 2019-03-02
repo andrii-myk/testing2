@@ -6,9 +6,10 @@ from django.views.generic import ListView
 from django.db.models import Q
 from django.forms import inlineformset_factory, modelformset_factory
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 
-from .models import Test, Question, TestRunAnswer, TestRun
-from .forms import QuestionForm, TestForm, TestRunAnswerForm, TestRunDetailForm
+from .models import Test, Question, TestRunAnswer, TestRun, Note
+from .forms import QuestionForm, TestForm, TestRunAnswerForm, TestRunDetailForm, NoteForm
 
 # Create your views here.
 def index(request):
@@ -26,7 +27,12 @@ def index(request):
 class TestDetail(ListView):
     def get(self, request, slug):
         test = get_object_or_404(Test, slug__iexact=slug)
-        return render(request, 'testing/tests/test_detail.html', context={'test': test})
+        content_type = ContentType.objects.get_for_model(test)
+        test_notes = Note.objects.filter(
+            content_type__pk=content_type.pk,
+            object_id=test.pk)
+        return render(request, 'testing/tests/test_detail.html', context={'test': test,'test_notes': test_notes})
+
 
 class QuestionsView(ListView):
     def get(self, request):
@@ -171,3 +177,32 @@ class TestRunTestList(ListView):
     def get(self, request, id):
         test_runs = TestRun.objects.filter(test__id=id)
         return render(request, 'testing/test_runs/test_runs_test_list.html', context={'test_runs': test_runs})
+
+
+class AddNoteView(ListView):
+    def get(self, request):
+        bound_form = NoteForm()
+        return render(request, 'testing/notes/add_note.html', context={'form': bound_form})
+
+    def post(self, request, *args, **kwargs):
+        obj_pk = kwargs.get('pk')
+        obj_type = kwargs.get('type')
+        model = apps.get_model('testing', obj_type)
+        instance = model.objects.get(pk=obj_pk)
+        bound_form = NoteForm(request.Post, instance=instance)
+
+        if bound_form.is_valid():
+            note_form = bound_form.save()
+            # instance.notes.create(author=request.user, text=)
+            return redirect(reverse('testing:test_detail_url', kwargs={'slug': updated_test.slug}))
+        return render(request, 'testing/notes/add_note.html', context={'form': bound_form, 'note': note_form})
+
+
+# class NotesListView(ListView):
+#     model = NoteItem
+#     template_name = 'notes/notes.html'
+
+#     def get_queryset(self):
+#         model_type = self.kwargs['type']
+#         content = ContentType.objects.get(model=model_type)
+#     return self.model.objects.filter(content_type=content.id)

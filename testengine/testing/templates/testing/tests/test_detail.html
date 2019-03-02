@@ -6,17 +6,22 @@
 {% endblock %}
 
 {% block content_title %}
+
     <h2>{{ test.title }}</h2>
+
 {% endblock %}
 
 {% block content %}
     {% csrf_token %}
+  
     <h3>{{test.description}} </h3>
     {% for question in test.questions.all %}
         <p>{{ question }}</p>
         {% empty %}
         empty list!
   {% endfor %}
+
+      
   <div class="container">
       <div class="row no-gutter">
           <div class="col-sm-1">
@@ -31,8 +36,31 @@
           <div class="col-sm-1">
             <a href="{% url 'testing:test_run_test_list_url' test.id %}" class="btn btn-success" role="button">TestRuns</a>
           </div>
+          <div class="col-sm-1">
+              <a href="{% url 'testing:add_note_url' %}" class="btn btn-warning" role="button">Add Note</a>
+            </div>
       </div>
   </div>
+  <h3>Notes:</h3>
+  <!-- {{ test.notes|safe}} -->
+  {% for field in test_notes %}
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                  <p>
+                    {{ field.author.username }}
+                  </p>
+                  <h5> 
+                    {{ field.text }}
+                  </h5>
+                  <p>
+                    {{ field.timestamp }}
+                  </p>
+                </div>
+            </div>
+       </div>
+  {% endfor %}
+  {{ test_notes. }}
 
 
 {% endblock %}
