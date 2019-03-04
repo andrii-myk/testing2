@@ -42,25 +42,14 @@
       </div>
   </div>
   <h3>Notes:</h3>
-  <!-- {{ test.notes|safe}} -->
-  {% for field in test_notes %}
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                  <p>
-                    {{ field.author.username }}
-                  </p>
-                  <h5> 
-                    {{ field.text }}
-                  </h5>
-                  <p>
-                    {{ field.timestamp }}
-                  </p>
-                </div>
-            </div>
-       </div>
+  
+  {% for note in test_notes %}
+      <blockquote class="blockquote">
+        <p class="mb-0">{{ note.text }}</p>
+        <footer class="blockquote-footer">{{ note.author }} in <cite title="Source Title">{{ note.timestamp|timesince}} ago.</cite></footer>
+      </blockquote>
   {% endfor %}
-  {{ test_notes. }}
+  
 
 
 {% endblock %}

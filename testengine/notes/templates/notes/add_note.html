@@ -1,0 +1,18 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Add new note
+{% endblock %}
+
+{% block content_title %}
+    Add new note for "{{ instance }}"
+{% endblock %}
+
+{% block content %}        
+        <form method="POST" action=''>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Add note" class='btn btn-primary'>
+        </form>
+{% endblock %}

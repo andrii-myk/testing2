@@ -1,10 +1,11 @@
 from django.db import models
 from django.shortcuts import reverse
 from django.template.defaultfilters import slugify
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericRelation
+
+from notes.models import Note
 
 
 class Question(models.Model):
@@ -20,8 +21,7 @@ class Test(models.Model):
     slug = models.SlugField(max_length=150, unique=True, blank = True)
     questions = models.ManyToManyField('Question', related_name='tests')
 
-    notes = GenericRelation('Note')
-
+    notes = GenericRelation(Note)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -36,15 +36,25 @@ class Test(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def get_content_type(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return content_type
+
 
 class TestRun(models.Model):
     test = models.ForeignKey('Test', on_delete=models.CASCADE)
     finished = models.DateTimeField(auto_now=True)
     
-    notes = GenericRelation('Note')
+    notes = GenericRelation(Note)
 
     def __str__(self):
         return f"{self.test.title}, finished by user on {self.finished:%d-%m-%y %H:%M}"
+
+    @property
+    def get_content_type(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return content_type
 
 
 class TestRunAnswer(models.Model):
@@ -52,21 +62,5 @@ class TestRunAnswer(models.Model):
     test_run = models.ForeignKey(TestRun, on_delete=models.CASCADE, related_name='testrunanswer')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="testrun_answer")
 
-    
-    
-
     def __str__(self):
         return f"{self.question} and {self.answer}"
-
-
-class Note(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-
-    content_type = models.ForeignKey(ContentType, on_delete = models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    noted_item = GenericForeignKey('content_type', 'object_id')
-
-    def __str__(self):
-        return f"{self.text} by {self.author} on {self.timestamp:%d-%m-%y %H:%M}"

@@ -1,0 +1,21 @@
+{% extends 'testing/base_testing.html' %}
+{% load static %}
+
+{% block title %}
+    Notes
+{% endblock %}
+
+{% block content_title %}
+    Notes
+{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+        <a href="{% url ''  %}" class="btn btn-primary" role="button">Notes for Tests</a>
+     </div>
+     <div class="col-sm-1">
+       <a href="{% url ''  %}" class="btn btn-primary" role="button">Notes for TestRuns</a>
+     </div>
+
+{% endblock %}

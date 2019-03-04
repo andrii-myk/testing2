@@ -37,6 +37,17 @@
                     <li><a class="nav_text" href="{% url 'testing:tests_index' %}">Tests</a></li>
                     <li><a class="nav_text" href="{% url 'testing:questions_url' %}">Questions</a></li>
                     <li><a class="nav_text" href="{% url 'testing:test_create_url' %}">Add test</a></li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="dropbtn" onclick="myFunction()">Notes
+                                <i class="fa fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-content" id="myDropdown">
+                                <a href="{% url 'notes:notes_url' 'test' %}">Test Notes</a>
+                                <a href="{% url 'notes:notes_url' 'testrun' %}">Test Run Notes</a>
+                            </div>
+                        </div> 
+                    </li>
                 </ul>
                 <form class="navbar-form navbar-left" action="{% url 'testing:tests_index' %}">
                     <div class="form-group">

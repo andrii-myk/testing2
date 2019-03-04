@@ -4,5 +4,5 @@ from .models import Question, Test, Note
 
 admin.site.register(Question)
 admin.site.register(Test)
-admin.site.register(Note)
+
 

@@ -16,10 +16,19 @@
         {% for form in formset%}
             {{ form.as_p }} 
         {% endfor %}
-
-        
-        <!-- {% for test_run_answer in test_run_answers %}
-            <p>{{ test_run_answer}} </p>
-        {% endfor %} -->
     </form>
+    <div class="container">
+        <div class="col-sm-1">
+            <a href="{% url 'testing:add_note_url' %}" class="btn btn-warning" role="button">Add Note</a>
+        </div>
+            
+    </div>
+    <h3>Notes:</h3>
+  
+    {% for note in test_run_notes %}
+      <blockquote class="blockquote">
+        <p class="mb-0">{{ note.text }}</p>
+        <footer class="blockquote-footer">{{ note.author }} in <cite title="Source Title">{{ note.timestamp|timesince}} ago.</cite></footer>
+      </blockquote>
+  {% endfor %}
 {% endblock %}

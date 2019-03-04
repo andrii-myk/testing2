@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('testing/', include('testing.urls')),
+    path('notes/', include('notes.urls')),
 ]
 if settings.DEBUG:
     import debug_toolbar
