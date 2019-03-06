@@ -1,0 +1,9 @@
+[
+  "testing/tests/test_models.py::test_test_is_assigned_slug",
+  "testing/tests/test_urls.py::TestUrls::test_questions_url",
+  "testing/tests/test_urls.py::TestUrls::test_test_detail_url",
+  "testing/tests/test_urls.py::TestUrls::test_tests_index",
+  "testing/tests/test_views.py::TestViews::test_index_GET",
+  "testing/tests/test_views.py::TestViews::test_question_create_POST",
+  "testing/tests/test_views.py::TestViews::test_question_view_GET"
+]

@@ -1,6 +1,16 @@
 {
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": false,
-    "python.linting.pep8Enabled": true
+    "python.linting.flake8Enabled": true,
+    "python.linting.pep8Enabled": false,
+    "python.linting.flake8Args": [
+        "--max-line-length=120",
+        "--ignore=E402,F841,F401,E302,E305",
+    ],
+    "python.unitTest.pyTestArgs": [
+        "./testing/tests"
+    ],
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.pyTestEnabled": true,
 }

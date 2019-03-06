@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 app_name = 'testing'
@@ -19,5 +18,4 @@ urlpatterns = [
     path('test/run/list/', views.TestRuns.as_view(), name='test_runs_url'),
     path('test/run/detail/<int:id>/', views.TestRunDetail.as_view(), name='test_run_detail_url'),
     path('add_note/', views.AddNoteView.as_view(), name='add_note_url'),
-    
  ]

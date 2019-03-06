@@ -13,12 +13,12 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question
-        
-        
+
+
 class Test(models.Model):
     title = models.CharField(max_length=150, db_index=True)
     description = models.TextField(db_index=True)
-    slug = models.SlugField(max_length=150, unique=True, blank = True)
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
     questions = models.ManyToManyField('Question', related_name='tests')
 
     notes = GenericRelation(Note)
@@ -32,7 +32,7 @@ class Test(models.Model):
 
     def get_absolute_url(self):
         return reverse('testing:test_detail_url', kwargs={'slug': self.slug})
-    
+
     def __str__(self):
         return self.title
 
@@ -45,7 +45,7 @@ class Test(models.Model):
 class TestRun(models.Model):
     test = models.ForeignKey('Test', on_delete=models.CASCADE)
     finished = models.DateTimeField(auto_now=True)
-    
+
     notes = GenericRelation(Note)
 
     def __str__(self):

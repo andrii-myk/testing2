@@ -3,10 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse
 from django.views.generic import ListView
 from django.db.models import Q
-from django.forms import inlineformset_factory, modelformset_factory
-from django import forms
+from django.forms import modelformset_factory
 from django.contrib.contenttypes.models import ContentType
-from django.apps import apps
 
 from .models import Test, Question, TestRunAnswer, TestRun
 from .forms import QuestionForm, TestForm, TestRunAnswerForm, TestRunDetailForm
@@ -18,7 +16,8 @@ from notes.forms import NoteForm
 def index(request):
     search_query = request.GET.get('search', '')
     if search_query:
-        tests = Test.objects.filter(Q(title__icontains=search_query) | Q(description__icontains=search_query))
+        tests = Test.objects.filter(Q(title__icontains=search_query) | Q(
+            description__icontains=search_query))
     else:
         tests = Test.objects.all()
 
@@ -48,7 +47,8 @@ class QuestionUpdate(ListView):
     def get(self, request, id):
         question = Question.objects.get(id__exact=id)
         bound_form = QuestionForm(instance=question)
-        return render(request, 'testing/questions/question_update.html', context={'form': bound_form, 'question': question, })
+        return render(request, 'testing/questions/question_update.html', 
+                      context={'form': bound_form, 'question': question, })
 
     def post(self, request, id):
         question = Question.objects.get(id__exact=id)
@@ -57,7 +57,8 @@ class QuestionUpdate(ListView):
         if bound_form.is_valid():
             updated_question = bound_form.save()
             return redirect(reverse('testing:questions_url'))
-        return render(request, 'testing/questions/question_update.html', context={'form': bound_form, 'question': question})
+        return render(request, 'testing/questions/question_update.html', 
+                      context={'form': bound_form, 'question': question})
 
 
 class QuestionDelete(ListView):
@@ -130,14 +131,17 @@ class TestDelete(ListView):
 
 class TestRunAnswerView(ListView):
     def get(self, request, id):
-        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0)
-        formset = TestRunFormSet(queryset=Test.objects.get(pk=id).questions.filter(tests__id=id))
+        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=(
+            'question', 'answer'), form=TestRunAnswerForm, extra=0)
+        formset = TestRunFormSet(queryset=Test.objects.get(
+            pk=id).questions.filter(tests__id=id))
         return render(request, 'testing/test_runs/test_run.html', context={'formset': formset})
 
     # WARNING BELOW YOU'RE GOING TO WATCH A LOT OF BAD CODE
     def post(self, request, id):
         questions = Question.objects.filter(tests__id=id)
-        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=('question', 'answer'), form=TestRunAnswerForm, extra=0)
+        TestRunFormSet = modelformset_factory(TestRunAnswer, fields=(
+            'question', 'answer'), form=TestRunAnswerForm, extra=0)
         bound_formset = TestRunFormSet(request.POST, queryset=questions)
         answer_questions = {}
         answer_error = False
@@ -158,7 +162,8 @@ class TestRunAnswerView(ListView):
         else:
             test_run = TestRun.objects.create(test=Test.objects.get(pk=id))
             for question, answer in answer_questions.items():
-                TestRunAnswer.objects.create(question=question, answer=answer, test_run=test_run)
+                TestRunAnswer.objects.create(
+                    question=question, answer=answer, test_run=test_run)
             return redirect(reverse('testing:tests_index'))
 
 
@@ -179,12 +184,14 @@ class TestRunDetail(ListView):
         print(content_type)
         request.session['obj'] = {'object_id': test_run.id, 'model': 'testrun'}
         test_run_notes = Note.objects.filter_by_instance(test_run)
-        return render(request, 'testing/test_runs/test_run_detail.html', context={'formset': my_formset, 'test_run': test_run, 
-                                                                                  'test_run_notes': test_run_notes})
+        return render(request, 'testing/test_runs/test_run_detail.html', context={
+            'formset': my_formset, 'test_run': test_run,
+            'test_run_notes': test_run_notes})
 
 
 class TestRunTestList(ListView):
     """Class for showing test_runs bounded to specific Test"""
+
     def get(self, request, id):
         test_runs = TestRun.objects.filter(test__id=id)
         return render(request, 'testing/test_runs/test_runs_test_list.html', context={'test_runs': test_runs})
@@ -220,7 +227,6 @@ class AddNoteView(ListView):
         form = NoteForm(request.POST)
 
         if form.is_valid():
-            c_type = form.cleaned_data.get("content_type")
             obj_id = form.cleaned_data.get("object_id")
             text_data = form.cleaned_data.get("text")
             new_note = Note.objects.get_or_create(
